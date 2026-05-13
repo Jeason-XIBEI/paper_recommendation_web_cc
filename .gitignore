@@ -1,0 +1,32 @@
+# Python
+__pycache__/
+*.py[cod]
+*.so
+.Python
+venv/
+.venv/
+
+# 环境变量和密钥
+.env
+*.key
+*.pem
+
+# 数据库
+*.db
+*.sqlite
+*.sqlite3
+instance/
+
+# 数据文件
+data/
+logs/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# 操作系统
+.DS_Store
+Thumbs.db

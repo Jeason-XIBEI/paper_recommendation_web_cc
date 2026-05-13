@@ -1,0 +1,194 @@
+[
+    {
+        "id": 1,
+        "title": "Traffic Flow Prediction using Graph Neural Networks",
+        "abstract": "We propose a novel GCN for predicting traffic speed.",
+        "keywords": "图神经网络，交通流预测",
+        "expected_relevant": true,
+        "expected_score": 9
+    },
+    {
+        "id": 2,
+        "title": "Deep Learning for Medical Image Segmentation",
+        "abstract": "A U-Net architecture for MRI brain tumor detection.",
+        "keywords": "图神经网络，交通流预测",
+        "expected_relevant": false,
+        "expected_score": 1
+    },
+    {
+        "id": 3,
+        "title": "A Review of Blockchain Technology",
+        "abstract": "This paper reviews consensus mechanisms in blockchain.",
+        "keywords": "图神经网络，交通流预测",
+        "expected_relevant": false,
+        "expected_score": 2
+    },
+    {
+        "id": 4,
+        "title": "Spatio-Temporal Graph Convolutional Networks for Traffic Forecasting",
+        "abstract": "ST-GCN captures spatial and temporal dependencies in road networks.",
+        "keywords": "时空图神经网络",
+        "expected_relevant": true,
+        "expected_score": 10
+    },
+    {
+        "id": 5,
+        "title": "ST-GCN: Spatio-Temporal Graph Convolutional Networks for Traffic Forecasting",
+        "abstract": "We propose a novel graph convolutional network that captures both spatial dependencies and temporal dynamics in traffic flow data. Experiments on PeMS datasets show state-of-the-art performance.",
+        "keywords": "时空图神经网络，交通流预测",
+        "expected_relevant": true,
+        "expected_score": 10
+    },
+    {
+        "id": 6,
+        "title": "Remote Sensing Image Super-Resolution Using Deep Residual Networks",
+        "abstract": "This paper presents a deep learning approach for enhancing the spatial resolution of satellite imagery. We employ residual learning to reconstruct high-resolution images from low-resolution inputs.",
+        "keywords": "遥感图像超分辨率，深度学习",
+        "expected_relevant": true,
+        "expected_score": 9
+    },
+    {
+        "id": 7,
+        "title": "BERT for Natural Language Understanding: A Comprehensive Survey",
+        "abstract": "We review the development of transformer-based models like BERT for various NLP tasks including sentiment analysis, named entity recognition, and question answering.",
+        "keywords": "时空图神经网络，交通流预测",
+        "expected_relevant": false,
+        "expected_score": 1
+    },
+    {
+        "id": 8,
+        "title": "Graph Neural Networks for Molecular Property Prediction",
+        "abstract": "We apply graph convolutional networks to predict chemical properties of molecules. The model learns representations of molecular graphs for drug discovery applications.",
+        "keywords": "图神经网络，交通流预测",
+        "expected_relevant": false,
+        "expected_score": 3
+    },
+    {
+        "id": 9,
+        "title": "A Brief Mention of GNNs in Urban Planning: Challenges and Opportunities",
+        "abstract": "This position paper discusses various urban planning paradigms. Graph neural networks are mentioned as a potential tool, but no implementation or experiments are provided.",
+        "keywords": "图神经网络，城市规划",
+        "expected_relevant": false,
+        "expected_score": 2
+    },
+    {
+        "id": 10,
+        "title": "Multi-Task Learning for Remote Sensing Scene Classification",
+        "abstract": "We propose a multi-task framework that jointly learns scene classification and land cover segmentation from aerial imagery. Shared representations improve both tasks.",
+        "keywords": "遥感场景分类，多任务学习",
+        "expected_relevant": true,
+        "expected_score": 9
+    },
+    {
+        "id": 11,
+        "title": "Federated Learning for Privacy-Preserving Healthcare Analytics",
+        "abstract": "We develop a federated learning protocol for hospitals to collaboratively train models without sharing patient data. The system preserves privacy while maintaining model accuracy.",
+        "keywords": "时空图神经网络，交通流预测",
+        "expected_relevant": false,
+        "expected_score": 1
+    },
+    {
+        "id": 12,
+        "title": "Attention-Based Spatio-Temporal Modeling for Crowd Flow Prediction",
+        "abstract": "We design an attention mechanism to capture long-range spatial dependencies and temporal patterns in urban crowd movement. Evaluated on taxi and bike-sharing datasets.",
+        "keywords": "时空预测，注意力机制",
+        "expected_relevant": true,
+        "expected_score": 8
+    },
+    {
+        "id": 13,
+        "title": "Transformer Architecture: The Foundation of Modern NLP",
+        "abstract": "This tutorial explains the transformer architecture from scratch, covering self-attention, positional encoding, and multi-head attention mechanisms used in language models.",
+        "keywords": "遥感图像分割，深度学习",
+        "expected_relevant": false,
+        "expected_score": 1
+    },
+    {
+        "id": 14,
+        "title": "LiDAR Point Cloud Classification Using 3D Convolutional Neural Networks",
+        "abstract": "We propose a 3D CNN architecture for classifying airborne LiDAR point clouds into ground, vegetation, and building categories. The method achieves high accuracy on urban datasets.",
+        "keywords": "点云分类，三维卷积",
+        "expected_relevant": true,
+        "expected_score": 9
+    },
+    {
+        "id": 15,
+        "title": "Reinforcement Learning for Autonomous Driving: A Survey",
+        "abstract": "This paper reviews reinforcement learning algorithms applied to self-driving cars, including policy gradient methods, Q-learning, and model-based approaches for navigation tasks.",
+        "keywords": "时空图神经网络，交通流预测",
+        "expected_relevant": false,
+        "expected_score": 2
+    },
+    {
+        "id": 16,
+        "title": "Deep Learning Meets GIS: A Review of GeoAI Applications",
+        "abstract": "We survey the intersection of deep learning and geographic information systems, covering applications in urban analytics, environmental monitoring, and spatial epidemiology without specific methodology.",
+        "keywords": "GeoAI，深度学习应用",
+        "expected_relevant": false,
+        "expected_score": 4
+    },
+    {
+        "id": 17,
+        "title": "Spatio-Temporal Graph Attention Networks for Origin-Destination Flow Prediction",
+        "abstract": "We introduce a graph attention network that models dynamic OD flows between regions. The model captures both spatial interactions and temporal evolution using attention weights.",
+        "keywords": "OD 流预测，图注意力网络",
+        "expected_relevant": true,
+        "expected_score": 10
+    },
+    {
+        "id": 18,
+        "title": "Computer Vision for Agricultural Crop Monitoring Using Drone Imagery",
+        "abstract": "We apply object detection and segmentation models to UAV-captured images for identifying crop types and estimating yield. The system uses YOLO and Mask R-CNN architectures.",
+        "keywords": "遥感图像分析，农业应用",
+        "expected_relevant": true,
+        "expected_score": 7
+    },
+    {
+        "id": 19,
+        "title": "Large Language Models: Capabilities, Limitations, and Future Directions",
+        "abstract": "This perspective article discusses the emergence of large language models, their emergent abilities, alignment challenges, and potential societal impacts across various domains.",
+        "keywords": "时空图神经网络，交通流预测",
+        "expected_relevant": false,
+        "expected_score": 1
+    },
+    {
+        "id": 20,
+        "title": "Graph Convolutional Networks: A Theoretical Overview",
+        "abstract": "We provide a mathematical foundation for graph convolutional networks, discussing spectral and spatial approaches, but without any application to traffic or spatial-temporal data.",
+        "keywords": "图神经网络，交通流预测",
+        "expected_relevant": false,
+        "expected_score": 3
+    },
+    {
+        "id": 21,
+        "title": "Change Detection in Remote Sensing Images Using Siamese Networks",
+        "abstract": "We propose a siamese neural network architecture for detecting land use changes between multi-temporal satellite images. The model learns discriminative features for pixel-wise change detection.",
+        "keywords": "遥感变化检测，孪生网络",
+        "expected_relevant": true,
+        "expected_score": 9
+    },
+    {
+        "id": 22,
+        "title": "Blockchain Technology for Secure Data Sharing in IoT Networks",
+        "abstract": "We explore how blockchain can enable secure and decentralized data sharing among IoT devices. The paper discusses consensus mechanisms and smart contracts for access control.",
+        "keywords": "时空图神经网络，交通流预测",
+        "expected_relevant": false,
+        "expected_score": 1
+    },
+    {
+        "id": 23,
+        "title": "Neural Ordinary Differential Equations for Continuous-Time Traffic Dynamics",
+        "abstract": "We model traffic flow as a continuous dynamical system using neural ODEs. This approach captures smooth temporal evolution and outperforms discrete-time models on highway datasets.",
+        "keywords": "交通流建模，神经微分方程",
+        "expected_relevant": true,
+        "expected_score": 8
+    },
+    {
+        "id": 24,
+        "title": "A General Framework for Graph Representation Learning",
+        "abstract": "This paper introduces a unified framework for learning node and graph embeddings. While graph methods are discussed, no specific application to spatial-temporal or geo-data is presented.",
+        "keywords": "图神经网络，时空预测",
+        "expected_relevant": false,
+        "expected_score": 4
+    }
+]

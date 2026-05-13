@@ -1,0 +1,75 @@
+{
+  "hooks": {
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "prompt",
+            "prompt": "You are a delivery verification gate that fires before Claude stops. Your job is to review this session and decide whether the stop should be allowed.\n\n## Rules\n\n1. **Check for changes**: Did this session modify any code, configuration, or documentation files? (Look for Write, Edit, or file-modifying Bash tool calls.)\n\n2. **If NO changes were made**: Output {\"continue\": true, \"reason\": \"No code/config/doc changes in this session.\"}\n\n3. **If changes WERE made**: Check whether the conversation already contains evidence of verification:\n   - Test execution results (unit/integration/e2e tests passing or failing with details)\n   - Lint or typecheck results\n   - Functional verification / manual testing results\n   - TODO / follow-up item check results\n\n4. **If verification evidence IS present**: Output {\"continue\": true, \"reason\": \"Verification complete: <brief summary of what was verified>.\"}\n\n5. **If verification evidence is MISSING**: Output {\"continue\": false, \"decision\": \"block\", \"stopReason\": \"Delivery verification missing. Before stopping, please: run tests, run lint/typecheck, verify functionality, and check for remaining TODOs. Then report the results.\", \"systemMessage\": \"Delivery gate: verification required before stop\"}\n\n## Important\n- Only block if this session actually changed code/config/doc files.\n- If the user was only asking questions or doing research, allow the stop.\n- Output ONLY valid JSON, no other text.\n\nHook input: $ARGUMENTS",
+            "timeout": 30,
+            "continueOnBlock": true
+          }
+        ]
+      }
+    ]
+  },
+  "enabledPlugins": {
+    "company-research@pm-skills": true,
+    "customer-journey-map@pm-skills": true,
+    "customer-journey-mapping-workshop@pm-skills": true,
+    "discovery-interview-prep@pm-skills": true,
+    "discovery-process@pm-skills": true,
+    "jobs-to-be-done@pm-skills": true,
+    "lean-ux-canvas@pm-skills": true,
+    "opportunity-solution-tree@pm-skills": true,
+    "problem-framing-canvas@pm-skills": true,
+    "problem-statement@pm-skills": true,
+    "proto-persona@pm-skills": true,
+    "pestel-analysis@pm-skills": true,
+    "positioning-statement@pm-skills": true,
+    "positioning-workshop@pm-skills": true,
+    "prd-development@pm-skills": true,
+    "press-release@pm-skills": true,
+    "prioritization-advisor@pm-skills": true,
+    "product-strategy-session@pm-skills": true,
+    "roadmap-planning@pm-skills": true,
+    "tam-sam-som-calculator@pm-skills": true,
+    "eol-message@pm-skills": true,
+    "epic-breakdown-advisor@pm-skills": true,
+    "epic-hypothesis@pm-skills": true,
+    "storyboard@pm-skills": true,
+    "user-story@pm-skills": true,
+    "user-story-mapping@pm-skills": true,
+    "user-story-mapping-workshop@pm-skills": true,
+    "user-story-splitting@pm-skills": true,
+    "acquisition-channel-advisor@pm-skills": true,
+    "business-health-diagnostic@pm-skills": true,
+    "feature-investment-advisor@pm-skills": true,
+    "finance-based-pricing-advisor@pm-skills": true,
+    "finance-metrics-quickref@pm-skills": true,
+    "saas-economics-efficiency-metrics@pm-skills": true,
+    "saas-revenue-growth-metrics@pm-skills": true,
+    "altitude-horizon-framework@pm-skills": true,
+    "director-readiness-advisor@pm-skills": true,
+    "executive-onboarding-playbook@pm-skills": true,
+    "product-sense-interview-answer@pm-skills": true,
+    "vp-cpo-readiness-advisor@pm-skills": true,
+    "ai-shaped-readiness-advisor@pm-skills": true,
+    "context-engineering-advisor@pm-skills": true,
+    "pol-probe@pm-skills": true,
+    "pol-probe-advisor@pm-skills": true,
+    "recommendation-canvas@pm-skills": true,
+    "workshop-facilitation@pm-skills": true,
+    "skill-authoring-workflow@pm-skills": true,
+    "context7@claude-plugins-official": true
+  },
+  "extraKnownMarketplaces": {
+    "pm-skills": {
+      "source": {
+        "source": "github",
+        "repo": "deanpeters/Product-Manager-Skills",
+        "ref": "main"
+      }
+    }
+  }
+}

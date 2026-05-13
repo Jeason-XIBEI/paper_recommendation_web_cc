@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>订阅推送 - 论文推荐系统</title>
+    <style>
+        :root { --bg: #f5f7fa; --card-bg: #ffffff; --text: #2c3e50; --text-secondary: #7f8c8d; --border: #ddd; --nav-bg: #2c3e50; }
+        @media (prefers-color-scheme: dark) {
+            :root { --bg: #1a1a2e; --card-bg: #16213e; --text: #e0e0e0; --text-secondary: #a0a0a0; --border: #333; --nav-bg: #0f3460; }
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', sans-serif; background: var(--bg); color: var(--text); }
+        .navbar { background: var(--nav-bg); color: white; padding: 1rem 2rem; display: flex; gap: 2rem; flex-wrap: wrap; }
+        .navbar a { color: white; text-decoration: none; padding: 0.5rem 1rem; border-radius: 5px; }
+        .navbar a:hover { background: #34495e; }
+        .container { max-width: 600px; margin: 2rem auto; padding: 0 2rem; }
+        .card { background: white; border-radius: 12px; padding: 2rem; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        h1 { color: #2c3e50; margin-bottom: 0.5rem; }
+        .subtitle { color: #7f8c8d; margin-bottom: 2rem; }
+        label { display: block; font-weight: 600; margin: 1rem 0 0.5rem; color: #2c3e50; }
+        input, select { width: 100%; padding: 0.75rem; border: 1px solid #ddd; border-radius: 8px; font-size: 1rem; }
+        button { background: #3498db; color: white; border: none; padding: 0.75rem 1.5rem; border-radius: 8px; font-size: 1rem; cursor: pointer; margin-top: 1rem; width: 100%; }
+        .info { background: #e8f4fd; padding: 1rem; border-radius: 8px; margin: 1rem 0; color: #2980b9; }
+        .footer { text-align: center; padding: 2rem; color: #7f8c8d; }
+        .success { background: #d4edda; color: #155724; padding: 1rem; border-radius: 8px; margin-top: 1rem; display: none; }
+    </style>
+</head>
+<body>
+    <div class="navbar">
+        <a href="/">🔍 论文搜索</a>
+        <a href="/tasks">📋 任务列表</a>
+        <a href="/subscribe">📧 订阅推送</a>
+    </div>
+
+    <div class="container">
+        <div class="card">
+            <h1>📧 订阅论文推送</h1>
+            <p class="subtitle">定期接收最新相关论文到你的邮箱</p>
+            
+            <form id="subscribeForm">
+                <label>👤 姓名</label>
+                <input type="text" name="username" placeholder="例如：张三">
+                
+                <label>📧 邮箱 *</label>
+                <input type="email" name="email" required placeholder="yourname@example.com">
+                
+                <label>🔬 研究关键词 *</label>
+                <input type="text" name="keywords" required placeholder="例如：traffic flow prediction, GNN">
+                
+                <label>📅 时间范围</label>
+                <select name="days_back">
+                    <option value="7">最近7天</option>
+                    <option value="30" selected>最近30天</option>
+                    <option value="90">最近90天</option>
+                </select>
+                
+                <label>⏰ 推送频率</label>
+                <select name="frequency">
+                    <option value="daily">每天</option>
+                    <option value="weekly" selected>每周</option>
+                    <option value="monthly">每月</option>
+                </select>
+                
+                <div class="info">
+                    💡 订阅后，系统会定期搜索相关论文并发送到你的邮箱。
+                </div>
+                
+                <button type="submit">📧 订阅推送</button>
+                <div id="successMsg" class="success"></div>
+            </form>
+        </div>
+        
+        <div class="footer">
+            <p>论文推荐系统 | 支持Crossref + AI智能筛选</p>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('subscribeForm').onsubmit = async (e) => {
+            e.preventDefault();
+            const formData = new FormData(e.target);
+            const data = Object.fromEntries(formData.entries());
+            
+            try {
+                const response = await fetch('/api/subscribe', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+                const result = await response.json();
+                
+                const successMsg = document.getElementById('successMsg');
+                if (result.message) {
+                    successMsg.textContent = result.message;
+                    successMsg.style.display = 'block';
+                    e.target.reset();
+                    setTimeout(() => successMsg.style.display = 'none', 3000);
+                }
+            } catch (error) {
+                alert('订阅失败：' + error.message);
+            }
+        };
+    </script>
+</body>
+</html>

@@ -1,0 +1,16 @@
+version: '3.8'
+
+services:
+  app:
+    build: .
+    container_name: paper-recommender
+    ports:
+      - "8092:8092"
+    volumes:
+      - ./data:/app/data
+      - ./logs:/app/logs
+      - ./instance:/app/instance
+      - ./.env:/app/.env:ro
+    environment:
+      - FLASK_ENV=production
+    restart: unless-stopped

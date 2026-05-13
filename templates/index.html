@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>论文推荐系统 - 首页</title>
+    <style>
+        :root {
+            --bg: #f5f7fa;
+            --card-bg: #ffffff;
+            --text: #2c3e50;
+            --text-secondary: #7f8c8d;
+            --border: #ddd;
+            --input-bg: #ffffff;
+            --hover-bg: #e8f4fd;
+            --nav-bg: #2c3e50;
+            --nav-text: #ffffff;
+            --info-bg: #e8f4fd;
+            --warning-bg: #fef9e6;
+            --warning-text: #b8860b;
+            --result-bg: #e8f8f5;
+            --journal-bg: #fafafa;
+            --journal-item-bg: #ffffff;
+        }
+
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --bg: #1a1a2e;
+                --card-bg: #16213e;
+                --text: #e0e0e0;
+                --text-secondary: #a0a0a0;
+                --border: #333;
+                --input-bg: #1a1a2e;
+                --hover-bg: #0f3460;
+                --nav-bg: #0f3460;
+                --nav-text: #e0e0e0;
+                --info-bg: #1a2744;
+                --warning-bg: #3d3520;
+                --warning-text: #f0c040;
+                --result-bg: #1a3a2a;
+                --journal-bg: #1a1a2e;
+                --journal-item-bg: #16213e;
+            }
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: var(--bg); min-height: 100vh; color: var(--text); }
+        .navbar { background: var(--nav-bg); color: var(--nav-text); padding: 1rem 2rem; display: flex; gap: 2rem; flex-wrap: wrap; }
+        .navbar a { color: var(--nav-text); text-decoration: none; padding: 0.5rem 1rem; border-radius: 5px; white-space: nowrap; }
+        .navbar a:hover { background: rgba(255,255,255,0.15); }
+        .container { max-width: 800px; margin: 2rem auto; padding: 0 1rem; }
+        .card { background: var(--card-bg); border-radius: 12px; padding: 2rem; box-shadow: 0 2px 10px rgba(0,0,0,0.1); margin-bottom: 2rem; }
+        h1 { color: var(--text); margin-bottom: 0.5rem; }
+        .subtitle { color: var(--text-secondary); margin-bottom: 2rem; }
+        label { display: block; font-weight: 600; margin: 1rem 0 0.5rem; color: var(--text); }
+        input, textarea, select { width: 100%; padding: 0.75rem; border: 1px solid var(--border); border-radius: 8px; font-size: 1rem; background: var(--input-bg); color: var(--text); }
+        textarea { min-height: 100px; }
+        button { background: #3498db; color: white; border: none; padding: 0.75rem 1.5rem; border-radius: 8px; font-size: 1rem; cursor: pointer; margin-top: 1rem; width: 100%; }
+        button:hover { background: #2980b9; }
+        .btn-sm { background: #3498db; color: white; border: none; padding: 0.4rem 0.8rem; border-radius: 6px; font-size: 0.8rem; cursor: pointer; width: auto; margin-top: 0; }
+        .btn-sm:hover { background: #2980b9; }
+        .info { background: var(--info-bg); padding: 0.75rem 1rem; border-radius: 8px; margin: 0.5rem 0; font-size: 13px; }
+        .info.warning { background: var(--warning-bg); color: var(--warning-text); }
+        .footer { text-align: center; padding: 2rem; color: var(--text-secondary); }
+        .result-card { background: var(--result-bg); border-left: 4px solid #27ae60; }
+        .loading { display: none; text-align: center; margin-top: 1rem; color: #3498db; }
+        .progress-container { display: none; margin-top: 1.5rem; }
+        .progress-bar-wrap { width: 100%; height: 12px; background: var(--border); border-radius: 6px; overflow: hidden; margin: 0.5rem 0; }
+        .progress-bar-fill { height: 100%; background: linear-gradient(90deg, #3498db, #27ae60); transition: width 0.3s; width: 0%; border-radius: 6px; }
+        .progress-text { color: var(--text-secondary); font-size: 13px; text-align: center; }
+
+        /* 期刊选择 */
+        .journal-selection { margin: 1rem 0; }
+        .journal-controls { display: flex; gap: 10px; margin-bottom: 10px; flex-wrap: wrap; }
+        .journal-controls button { flex: 1; padding: 0.5rem; font-size: 0.9rem; margin-top: 0; min-width: 80px; }
+        .journal-list { max-height: 300px; overflow-y: auto; border: 1px solid var(--border); border-radius: 8px; padding: 10px; background: var(--journal-bg); }
+        .journal-item { display: flex; align-items: center; padding: 8px; margin: 5px 0; background: var(--journal-item-bg); border-radius: 5px; transition: background 0.2s; }
+        .journal-item:hover { background: var(--hover-bg); }
+        .journal-item input[type="checkbox"] { width: auto; margin-right: 10px; cursor: pointer; }
+        .journal-item label { margin: 0; cursor: pointer; font-weight: normal; flex: 1; }
+        .journal-count { background: #3498db; color: white; padding: 2px 8px; border-radius: 12px; font-size: 12px; margin-left: 10px; }
+
+        /* 搜索历史 */
+        .history-section { margin-bottom: 1rem; }
+        .history-tags { display: flex; flex-wrap: wrap; gap: 8px; }
+        .history-tag { background: var(--info-bg); color: var(--text); padding: 4px 12px; border-radius: 16px; font-size: 12px; cursor: pointer; border: 1px solid var(--border); transition: background 0.2s; }
+        .history-tag:hover { background: var(--hover-bg); }
+
+        @media (max-width: 600px) {
+            .container { padding: 0 0.5rem; margin: 1rem auto; }
+            .card { padding: 1rem; }
+            .navbar { padding: 0.75rem 0.5rem; gap: 0.5rem; }
+            .navbar a { font-size: 0.85rem; padding: 0.4rem 0.6rem; }
+            .journal-controls { flex-direction: column; gap: 5px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="navbar">
+        <a href="/">🔍 论文搜索</a>
+        <a href="/tasks">📋 任务列表</a>
+        <a href="/subscribe"> 📧 订阅推送</a>
+    </div>
+
+    <div class="container">
+        <div class="card">
+            <h1>🔍 论文推荐系统</h1>
+            <p class="subtitle">输入研究关键词，自动搜索相关论文并生成摘要</p>
+
+            <div class="history-section" id="historySection" style="display:none;">
+                <div style="font-size: 13px; color: var(--text-secondary); margin-bottom: 5px;">📜 最近搜索:</div>
+                <div class="history-tags" id="historyTags"></div>
+            </div>
+
+            <form id="searchForm">
+                <label>📝 任务名称（可选）</label>
+                <input type="text" name="task_name" placeholder="例如：GeoAI流预测研究">
+                
+                <label>🔬 研究关键词 *</label>
+                <textarea name="keywords" placeholder="例如：traffic flow prediction, graph neural network, spatiotemporal forecasting, GeoAI" required></textarea>
+                
+                <label>📚 期刊范围选择</label>
+                <div class="journal-selection">
+                    <div class="journal-controls">
+                        <button type="button" onclick="selectAllJournals()">✅ 全选</button>
+                        <button type="button" onclick="deselectAllJournals()">❌ 清空</button>
+                        <button type="button" onclick="selectTopJournals()">⭐ 顶刊</button>
+                    </div>
+                    <div class="journal-list" id="journalList">
+                        <!-- 期刊列表将通过JavaScript动态加载 -->
+                        <div style="text-align: center; padding: 20px; color: #999;">
+                            加载中...
+                        </div>
+                    </div>
+                    <div class="info" style="margin-top: 10px;">
+                        📊 已选择 <span id="selectedCount" class="journal-count">0</span> 个期刊
+                    </div>
+                </div>
+
+                <label>📅 时间范围（天）</label>
+                <select name="days_back">
+                    <option value="7">最近7天</option>
+                    <option value="30" selected>最近30天</option>
+                    <option value="90">最近90天</option>
+                    <option value="180">最近180天</option>
+                    <option value="365">最近1年</option>
+                </select>
+                
+                <label>🎨 AI创造性 (Temperature)</label>
+                <div style="display: flex; align-items: center; gap: 15px;">
+                    <input type="range" id="temperature" name="temperature" min="0" max="1" step="0.05" value="0.3" style="flex:1;">
+                    <span id="temperatureValue" style="width: 45px; text-align: center; font-weight: bold;">0.30</span>
+                </div>
+                <div class="info warning">
+                    💡 <strong>温度参数说明</strong><br>
+                    温度越低(0.1-0.3) → 输出更保守稳定，适合精确筛选<br>
+                    温度越高(0.6-0.9) → 输出更多样有创意，适合探索性搜索
+                </div>
+                
+                <label>📧 接收邮箱（可选）</label>
+                <input type="email" name="email" placeholder="结果将发送到你的邮箱">
+                
+                <div class="info">
+                    📚 系统将搜索选定的期刊，使用AI智能筛选和总结论文。
+                </div>
+                
+                <button type="submit">🚀 开始搜索</button>
+                <div class="loading" id="loading">⏳ 任务已提交，正在后台处理中...</div>
+                <div class="progress-container" id="progressContainer">
+                    <div class="progress-bar-wrap">
+                        <div class="progress-bar-fill" id="progressBar"></div>
+                    </div>
+                    <div class="progress-text" id="progressText"></div>
+                </div>
+            </form>
+        </div>
+        
+        <div id="result" style="display:none;" class="card result-card">
+            <h3>✅ 任务提交成功！</h3>
+            <p id="resultMessage"></p>
+            <a href="/tasks" style="color:#3498db;">查看任务列表 →</a>
+        </div>
+        
+        <div class="footer">
+            <p>论文推荐系统 | 支持50+ GeoAI期刊 | AI智能筛选 (GLM-4-Flash)</p>
+        </div>
+    </div>
+
+    <script>
+        let allJournals = {};
+
+        // 温度滑块显示更新
+        const tempSlider = document.getElementById('temperature');
+        const tempValue = document.getElementById('temperatureValue');
+        if (tempSlider) {
+            tempSlider.oninput = function() {
+                tempValue.textContent = parseFloat(this.value).toFixed(2);
+            };
+        }
+        
+        // 加载期刊列表
+        async function loadJournals() {
+            try {
+                const response = await fetch('/api/journals');
+                allJournals = await response.json();
+                renderJournalList();
+            } catch (error) {
+                console.error('加载期刊列表失败:', error);
+                document.getElementById('journalList').innerHTML =
+                    '<div style="text-align: center; padding: 20px; color: red;">加载失败，请刷新页面</div>';
+            }
+        }
+
+        // 渲染数据源列表
+        function renderJournalList() {
+            const journalList = document.getElementById('journalList');
+            const journals = allJournals.journals || allJournals;  // 兼容旧格式
+            const arxiv = allJournals.arxiv || {};
+            const conferences = allJournals.conferences || [];
+
+            const categories = {
+                '综合性': ['Nature', 'Science'],
+                'AI顶刊': [],
+                '计算机视觉': [],
+                '自然语言处理': [],
+                '信息安全': [],
+                '遥感': [],
+                'GIS': [],
+                '地球科学': [],
+                '其他': []
+            };
+
+            // 分类期刊
+            Object.keys(journals).forEach(name => {
+                if (categories['综合性'].includes(name)) return;
+                if (name.includes('AI') || name.includes('Intelligence') || name.includes('Learning') ||
+                    name.includes('Pattern') || name.includes('Neural')) {
+                    categories['AI顶刊'].push(name);
+                } else if (name.includes('Vision') || name.includes('Image')) {
+                    categories['计算机视觉'].push(name);
+                } else if (name.includes('Linguistic') || name.includes('Language')) {
+                    categories['自然语言处理'].push(name);
+                } else if (name.includes('Security') || name.includes('Forensics')) {
+                    categories['信息安全'].push(name);
+                } else if (name.includes('Remote') || name.includes('Sensing') || name.includes('Geoscience')) {
+                    categories['遥感'].push(name);
+                } else if (name.includes('GIS') || name.includes('Geograph')) {
+                    categories['GIS'].push(name);
+                } else if (name.includes('Earth') || name.includes('Geo')) {
+                    categories['地球科学'].push(name);
+                } else {
+                    categories['其他'].push(name);
+                }
+            });
+
+            let html = '';
+
+            // 期刊部分
+            for (const [category, cats] of Object.entries(categories)) {
+                if (cats.length === 0 && category !== '综合性') continue;
+                html += `<div style="margin: 15px 0;">`;
+                html += `<strong style="color: #2c3e50; font-size: 14px;">📚 ${category}</strong>`;
+                const items = category === '综合性' ? categories['综合性'] : cats;
+                items.forEach(name => {
+                    html += `<div class="journal-item"><input type="checkbox" id="src_${name}" value="${name}" checked><label for="src_${name}">${name}</label></div>`;
+                });
+                html += `</div>`;
+            }
+
+            // arXiv 预印本
+            if (Object.keys(arxiv).length > 0) {
+                html += `<div style="margin: 15px 0;"><strong style="color: #b34700; font-size: 14px;">📄 arXiv 预印本</strong>`;
+                Object.keys(arxiv).forEach(name => {
+                    html += `<div class="journal-item"><input type="checkbox" id="src_${name}" value="${name}"><label for="src_${name}">${name}</label></div>`;
+                });
+                html += `</div>`;
+            }
+
+            // 会议论文
+            if (conferences.length > 0) {
+                html += `<div style="margin: 15px 0;"><strong style="color: #8e44ad; font-size: 14px;">🎤 会议论文</strong>`;
+                conferences.forEach(name => {
+                    html += `<div class="journal-item"><input type="checkbox" id="src_${name}" value="${name}"><label for="src_${name}">${name}</label></div>`;
+                });
+                html += `</div>`;
+            }
+
+            journalList.innerHTML = html;
+            updateSelectedCount();
+
+            document.querySelectorAll('.journal-item input[type="checkbox"]').forEach(cb => {
+                cb.addEventListener('change', updateSelectedCount);
+            });
+        }
+
+        // 全选
+        function selectAllJournals() {
+            document.querySelectorAll('.journal-item input[type="checkbox"]').forEach(cb => {
+                cb.checked = true;
+            });
+            updateSelectedCount();
+        }
+
+        // 清空
+        function deselectAllJournals() {
+            document.querySelectorAll('.journal-item input[type="checkbox"]').forEach(cb => {
+                cb.checked = false;
+            });
+            updateSelectedCount();
+        }
+
+        // 选择顶刊
+        function selectTopJournals() {
+            deselectAllJournals();
+            const topJournals = ['Nature', 'Science',
+                'Journal of Machine Learning Research (JMLR)',
+                'Artificial Intelligence (AIJ)',
+                'IEEE Transactions on Pattern Analysis and Machine Intelligence (TPAMI)',
+                'International Journal of Computer Vision (IJCV)'];
+
+            topJournals.forEach(name => {
+                const cb = document.getElementById(`journal_${name}`);
+                if (cb) cb.checked = true;
+            });
+            updateSelectedCount();
+        }
+
+        // 更新选中数量
+        function updateSelectedCount() {
+            const count = document.querySelectorAll('.journal-item input[type="checkbox"]:checked').length;
+            document.getElementById('selectedCount').textContent = count;
+        }
+
+        // 获取选中的期刊列表
+        function getSelectedJournals() {
+            const selected = [];
+            document.querySelectorAll('.journal-item input[type="checkbox"]:checked').forEach(cb => {
+                selected.push(cb.value);
+            });
+            return selected;
+        }
+
+        let currentEventSource = null;
+
+        // 表单提交
+        document.getElementById('searchForm').onsubmit = async (e) => {
+            e.preventDefault();
+            const formData = new FormData(e.target);
+            const loading = document.getElementById('loading');
+            const resultDiv = document.getElementById('result');
+            const resultMsg = document.getElementById('resultMessage');
+            const progressContainer = document.getElementById('progressContainer');
+            const progressBar = document.getElementById('progressBar');
+            const progressText = document.getElementById('progressText');
+
+            const selectedJournals = getSelectedJournals();
+            if (selectedJournals.length === 0) {
+                alert('请至少选择一个期刊！');
+                return;
+            }
+
+            loading.style.display = 'block';
+
+            // 关闭之前的 SSE 连接
+            if (currentEventSource) {
+                currentEventSource.close();
+            }
+
+            try {
+                const requestData = {
+                    task_name: formData.get('task_name'),
+                    keywords: formData.get('keywords'),
+                    days_back: formData.get('days_back'),
+                    email: formData.get('email'),
+                    temperature: formData.get('temperature'),
+                    journals: selectedJournals
+                };
+
+                const response = await fetch('/api/search', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(requestData)
+                });
+                const data = await response.json();
+
+                if (data.task_id) {
+                    resultDiv.style.display = 'none';
+                    loading.style.display = 'none';
+                    progressContainer.style.display = 'block';
+                    progressText.textContent = '任务已提交，正在搜索...';
+
+                    // 保存搜索历史
+                    saveSearch({ keywords: formData.get('keywords'), days_back: formData.get('days_back'), temperature: formData.get('temperature') });
+                    renderHistory();
+
+                    // 连接 SSE
+                    currentEventSource = new EventSource(`/api/task/${data.task_id}/stream`);
+
+                    currentEventSource.onmessage = function(event) {
+                        const msg = JSON.parse(event.data);
+
+                        if (msg.type === 'progress') {
+                            progressBar.style.width = msg.progress + '%';
+                            progressText.textContent = msg.message;
+                        } else if (msg.type === 'done') {
+                            progressBar.style.width = '100%';
+                            progressText.textContent = msg.message;
+                            resultMsg.innerHTML = `任务ID: ${data.task_id}<br>选择了 ${selectedJournals.length} 个期刊<br>${msg.message}<br><a href="/tasks" style="color:#3498db;">查看任务列表 →</a>`;
+                            resultDiv.style.display = 'block';
+                            progressContainer.style.display = 'none';
+                            currentEventSource.close();
+                            currentEventSource = null;
+                        } else if (msg.type === 'error') {
+                            progressText.textContent = '❌ ' + msg.message;
+                            resultMsg.innerHTML = '任务处理失败，请查看任务列表。';
+                            resultDiv.style.display = 'block';
+                            progressContainer.style.display = 'none';
+                            currentEventSource.close();
+                            currentEventSource = null;
+                        }
+                    };
+
+                    currentEventSource.onerror = function() {
+                        // SSE 连接问题（非致命，后台任务仍在运行）
+                        if (currentEventSource) {
+                            currentEventSource.close();
+                            currentEventSource = null;
+                        }
+                    };
+
+                    e.target.reset();
+                    if (tempSlider) tempSlider.value = 0.3;
+                    if (tempValue) tempValue.textContent = '0.30';
+                    loadJournals();
+                } else {
+                    loading.style.display = 'none';
+                    resultMsg.innerHTML = `提交失败: ${data.error || '未知错误'}`;
+                    resultDiv.style.display = 'block';
+                }
+            } catch (error) {
+                loading.style.display = 'none';
+                resultMsg.innerHTML = `网络错误: ${error.message}`;
+                resultDiv.style.display = 'block';
+            }
+        };
+
+        // 页面加载
+        window.addEventListener('DOMContentLoaded', () => {
+            loadJournals();
+            renderHistory();
+        });
+
+        // ===== 搜索历史 =====
+        const HISTORY_KEY = 'paper_search_history';
+        const MAX_HISTORY = 10;
+
+        function getHistory() {
+            try { return JSON.parse(localStorage.getItem(HISTORY_KEY)) || []; }
+            catch(e) { return []; }
+        }
+
+        function saveSearch(params) {
+            let history = getHistory();
+            history = history.filter(h => h.keywords !== params.keywords);
+            history.unshift({ keywords: params.keywords, days: params.days_back, temp: params.temperature, time: new Date().toISOString() });
+            if (history.length > MAX_HISTORY) history = history.slice(0, MAX_HISTORY);
+            localStorage.setItem(HISTORY_KEY, JSON.stringify(history));
+        }
+
+        function renderHistory() {
+            const history = getHistory();
+            const section = document.getElementById('historySection');
+            const tags = document.getElementById('historyTags');
+            if (history.length === 0) { section.style.display = 'none'; return; }
+            section.style.display = 'block';
+            tags.innerHTML = history.map((h, i) =>
+                `<span class="history-tag" title="温度:${h.temp} | ${h.days}天 | ${h.time?.slice(0,10)||''}" onclick="applyHistory(${i})">${escapeHtml(h.keywords.substring(0, 40))}</span>`
+            ).join('');
+        }
+
+        function applyHistory(index) {
+            const h = getHistory()[index];
+            if (!h) return;
+            document.querySelector('textarea[name="keywords"]').value = h.keywords;
+            document.querySelector('select[name="days_back"]').value = h.days || 30;
+            if (h.temp !== undefined) {
+                document.getElementById('temperature').value = h.temp;
+                document.getElementById('temperatureValue').textContent = parseFloat(h.temp).toFixed(2);
+            }
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+    </script>
+</body>
+</html>
