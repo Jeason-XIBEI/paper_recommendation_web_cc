@@ -12,7 +12,7 @@ COPY . .
 # 创建数据目录
 RUN mkdir -p data logs
 
-EXPOSE 8092
+EXPOSE 8093
 
 # 生产模式使用 gunicorn
 CMD ["gunicorn", "-c", "gunicorn_config.py", "web_app:app"]

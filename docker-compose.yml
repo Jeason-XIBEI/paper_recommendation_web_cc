@@ -5,7 +5,7 @@ services:
     build: .
     container_name: paper-recommender
     ports:
-      - "8092:8092"
+      - "8093:8093"
     volumes:
       - ./data:/app/data
       - ./logs:/app/logs
