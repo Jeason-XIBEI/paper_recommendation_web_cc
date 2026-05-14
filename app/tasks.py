@@ -145,13 +145,13 @@ def run_search_task(app, task_id, selected_journals=None):
             seen_dois = set()
             for idx, paper in enumerate(all_papers):
                 task.progress = 50 + int((idx / max(len(all_papers), 1)) * 50)
+                push_event(task_id, {
+                    'type': 'progress', 'stage': 'screen',
+                    'progress': task.progress,
+                    'message': f'AI筛选中 ({idx + 1}/{len(all_papers)})'
+                })
                 if idx % 5 == 0:
                     db.session.commit()
-                    push_event(task_id, {
-                        'type': 'progress', 'stage': 'screen',
-                        'progress': task.progress,
-                        'message': f'AI筛选中 ({idx}/{len(all_papers)})'
-                    })
 
                 doi = paper.get('doi', '')
                 if doi and doi in seen_dois:

@@ -131,10 +131,10 @@
                         <span class="status status-${task.status}">${getStatusText(task.status)}</span>
                         ${task.status === 'running' ? `
                             <div class="mini-progress-wrap"><div class="mini-progress-fill" id="fill-${task.id}" style="width:${task.progress || 0}%"></div></div>
-                            <div class="mini-progress-text" id="ptext-${task.id}">${task.progress || 0}%</div>
+                            <div class="mini-progress-text" id="ptext-${task.id}">${task.progress > 0 ? task.progress + '%' : '准备中...'}</div>
                         ` : ''}
                     </div>
-                    <div>${task.paper_count || 0}</div>
+                    <div>${task.status === 'running' ? '-' : (task.paper_count || 0)}</div>
                     <div class="btn-group">
                         ${task.status === 'completed' ? `
                             <a href="javascript:viewResult(${task.id})" class="btn btn-view">查看</a>
