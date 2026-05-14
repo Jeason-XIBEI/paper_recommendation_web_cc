@@ -57,7 +57,7 @@ def api_get_tasks():
     return jsonify([{
         'id': t.id, 'task_name': t.task_name,
         'keywords': t.keywords[:100] if t.keywords else '',
-        'status': t.status, 'paper_count': t.paper_count,
+        'status': t.status, 'progress': t.progress, 'paper_count': t.paper_count,
         'created_at': t.created_at.strftime('%Y-%m-%d %H:%M:%S') if t.created_at else '',
         'result_file': t.result_file,
         'selected_journals': t.selected_journals.split(',') if t.selected_journals else []
