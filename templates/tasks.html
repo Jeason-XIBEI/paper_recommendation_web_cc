@@ -201,8 +201,8 @@
                             </div>
                             <div class="paper-summary">${paper.summary_cn || '暂无摘要'}</div>
                             <div style="margin-top:8px;">
-                                <button class="copy-btn" onclick="copyText('${escapeHtml(paper.title)}')">复制标题</button>
-                                ${doi ? `<button class="copy-btn" onclick="copyText('${escapeHtml(doi)}')">复制DOI</button>` : ''}
+                                <button class="copy-btn" data-copy="${escapeHtml(paper.title)}">复制标题</button>
+                                ${doi ? `<button class="copy-btn" data-copy="${escapeHtml(doi)}">复制DOI</button>` : ''}
                                 <a href="${paper.url||'https://doi.org/'+doi}" target="_blank" class="btn btn-view" style="padding:2px 8px;font-size:11px;">原文</a>
                             </div>
                         </div>`;
@@ -213,11 +213,17 @@
             modal.style.display = 'flex';
         }
 
-        function copyText(text) {
+        document.addEventListener('click', function(e) {
+            const btn = e.target.closest('.copy-btn');
+            if (!btn) return;
+            const text = btn.getAttribute('data-copy');
+            if (!text) return;
             navigator.clipboard.writeText(text).then(() => {
-                // 短暂反馈
+                const orig = btn.textContent;
+                btn.textContent = '已复制!';
+                setTimeout(() => { btn.textContent = orig; }, 1500);
             }).catch(() => {});
-        }
+        });
         
         function getStatusText(status) {
             const map = { pending: '等待中', running: '进行中', completed: '已完成', failed: '失败' };

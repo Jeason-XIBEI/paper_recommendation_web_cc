@@ -405,7 +405,7 @@
                         } else if (msg.type === 'done') {
                             progressBar.style.width = '100%';
                             progressText.textContent = msg.message;
-                            resultMsg.innerHTML = `任务ID: ${data.task_id}<br>选择了 ${selectedJournals.length} 个期刊<br>${msg.message}<br><a href="/tasks" style="color:#3498db;">查看任务列表 →</a>`;
+                            resultMsg.innerHTML = `任务ID: ${data.task_id}<br>选择了 ${selectedJournals.length} 个期刊<br>${msg.message}`;
                             resultDiv.style.display = 'block';
                             progressContainer.style.display = 'none';
                             currentEventSource.close();
