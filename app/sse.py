@@ -10,19 +10,21 @@ _task_queues_lock = threading.Lock()
 
 
 def push_task_event(task_id, msg):
-    """向任务的 SSE 队列推送事件"""
+    """向任务的 SSE 队列推送事件（队列不存在时自动创建）"""
     with _task_queues_lock:
-        if task_id in _task_queues:
-            _task_queues[task_id].put(msg)
+        if task_id not in _task_queues:
+            _task_queues[task_id] = queue.Queue()
+        _task_queues[task_id].put(msg)
 
 
 def create_sse_endpoint(task_id):
     """返回 Flask SSE Response"""
     def event_stream():
         with _task_queues_lock:
-            if task_id not in _task_queues:
-                _task_queues[task_id] = queue.Queue()
-            q = _task_queues[task_id]
+            q = _task_queues.get(task_id)
+            if q is None:
+                q = queue.Queue()
+                _task_queues[task_id] = q
 
         try:
             while True:
