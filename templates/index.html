@@ -148,13 +148,13 @@
                 
                 <label>🎨 AI创造性 (Temperature)</label>
                 <div style="display: flex; align-items: center; gap: 15px;">
-                    <input type="range" id="temperature" name="temperature" min="0" max="1" step="0.05" value="0.3" style="flex:1;">
+                    <input type="range" id="temperature" name="temperature" min="0.1" max="0.3" step="0.05" value="0.3" style="flex:1;">
                     <span id="temperatureValue" style="width: 45px; text-align: center; font-weight: bold;">0.30</span>
                 </div>
                 <div class="info warning">
                     💡 <strong>温度参数说明</strong><br>
-                    温度越低(0.1-0.3) → 输出更保守稳定，适合精确筛选<br>
-                    温度越高(0.6-0.9) → 输出更多样有创意，适合探索性搜索
+                    温度越低(0.1) → 输出更保守稳定，筛选结果更集中<br>
+                    温度越高(0.3) → 输出稍灵活，覆盖范围更宽
                 </div>
                 
                 <label>📧 接收邮箱（可选）</label>

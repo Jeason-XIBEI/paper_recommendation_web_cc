@@ -31,7 +31,7 @@ def api_search():
         email = data.get('email', '')
         task_name = data.get('task_name', f"搜索_{keywords[:20]}")
         temperature = float(data.get('temperature', 0.3))
-        temperature = max(0.0, min(1.0, temperature))
+        temperature = max(0.1, min(0.3, temperature))
         selected_journals = data.get('journals', [])
 
         task = SearchTask(
