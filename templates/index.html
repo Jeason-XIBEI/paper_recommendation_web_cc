@@ -166,12 +166,6 @@
                 
                 <button type="submit">🚀 开始搜索</button>
                 <div class="loading" id="loading">⏳ 任务已提交，正在后台处理中...</div>
-                <div class="progress-container" id="progressContainer">
-                    <div class="progress-bar-wrap">
-                        <div class="progress-bar-fill" id="progressBar"></div>
-                    </div>
-                    <div class="progress-text" id="progressText"></div>
-                </div>
             </form>
         </div>
         
@@ -340,8 +334,6 @@
             return selected;
         }
 
-        let currentEventSource = null;
-
         // 表单提交
         document.getElementById('searchForm').onsubmit = async (e) => {
             e.preventDefault();
@@ -349,9 +341,6 @@
             const loading = document.getElementById('loading');
             const resultDiv = document.getElementById('result');
             const resultMsg = document.getElementById('resultMessage');
-            const progressContainer = document.getElementById('progressContainer');
-            const progressBar = document.getElementById('progressBar');
-            const progressText = document.getElementById('progressText');
 
             const selectedJournals = getSelectedJournals();
             if (selectedJournals.length === 0) {
@@ -360,11 +349,7 @@
             }
 
             loading.style.display = 'block';
-
-            // 关闭之前的 SSE 连接
-            if (currentEventSource) {
-                currentEventSource.close();
-            }
+            resultDiv.style.display = 'none';
 
             try {
                 const requestData = {
@@ -384,49 +369,13 @@
                 const data = await response.json();
 
                 if (data.task_id) {
-                    resultDiv.style.display = 'none';
                     loading.style.display = 'none';
-                    progressContainer.style.display = 'block';
-                    progressText.textContent = '任务已提交，正在搜索...';
+                    resultMsg.innerHTML = `任务ID: ${data.task_id}<br>选择了 ${selectedJournals.length} 个期刊<br>任务已提交，前往 <a href="/tasks" style="color:#3498db;">任务列表 →</a> 查看进度`;
+                    resultDiv.style.display = 'block';
 
                     // 保存搜索历史
                     saveSearch({ keywords: formData.get('keywords'), days_back: formData.get('days_back'), temperature: formData.get('temperature') });
                     renderHistory();
-
-                    // 连接 SSE
-                    currentEventSource = new EventSource(`/api/task/${data.task_id}/stream`);
-
-                    currentEventSource.onmessage = function(event) {
-                        const msg = JSON.parse(event.data);
-
-                        if (msg.type === 'progress') {
-                            progressBar.style.width = msg.progress + '%';
-                            progressText.textContent = msg.message;
-                        } else if (msg.type === 'done') {
-                            progressBar.style.width = '100%';
-                            progressText.textContent = msg.message;
-                            resultMsg.innerHTML = `任务ID: ${data.task_id}<br>选择了 ${selectedJournals.length} 个期刊<br>${msg.message}`;
-                            resultDiv.style.display = 'block';
-                            progressContainer.style.display = 'none';
-                            currentEventSource.close();
-                            currentEventSource = null;
-                        } else if (msg.type === 'error') {
-                            progressText.textContent = '❌ ' + msg.message;
-                            resultMsg.innerHTML = '任务处理失败，请查看任务列表。';
-                            resultDiv.style.display = 'block';
-                            progressContainer.style.display = 'none';
-                            currentEventSource.close();
-                            currentEventSource = null;
-                        }
-                    };
-
-                    currentEventSource.onerror = function() {
-                        // SSE 连接问题（非致命，后台任务仍在运行）
-                        if (currentEventSource) {
-                            currentEventSource.close();
-                            currentEventSource = null;
-                        }
-                    };
 
                     e.target.reset();
                     if (tempSlider) tempSlider.value = 0.3;

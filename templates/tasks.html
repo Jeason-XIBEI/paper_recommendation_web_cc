@@ -58,8 +58,11 @@
         .paper-title-cn { font-size: 1rem; font-weight: 600; color: var(--text); margin-bottom: 0.3rem; }
         .paper-meta { font-size: 12px; color: var(--text-secondary); display: flex; gap: 15px; flex-wrap: wrap; margin-bottom: 0.5rem; }
         .paper-summary { font-size: 13px; color: var(--text); line-height: 1.5; }
-        .copy-btn { background: transparent; border: 1px solid var(--border); padding: 2px 8px; border-radius: 4px; cursor: pointer; color: var(--text-secondary); font-size: 11px; margin: 0; width: auto; }
-        .copy-btn:hover { background: var(--hover-bg); }
+        .copy-btn { background: var(--card-bg); border: 1px solid #3498db; padding: 3px 10px; border-radius: 4px; cursor: pointer; color: #3498db; font-size: 11px; margin: 0 4px 0 0; width: auto; transition: all 0.2s; }
+        .copy-btn:hover { background: #3498db; color: #fff; }
+        .mini-progress-wrap { width: 100%; height: 6px; background: var(--border); border-radius: 3px; overflow: hidden; margin-top: 6px; }
+        .mini-progress-fill { height: 100%; background: linear-gradient(90deg, #3498db, #27ae60); transition: width 0.3s; width: 0; border-radius: 3px; }
+        .mini-progress-text { font-size: 11px; color: var(--text-secondary); margin-top: 2px; }
         .keyword-highlight { background: #ffeaa7; padding: 0 2px; border-radius: 2px; }
         @media (max-width: 768px) {
             .task-header, .task-item { grid-template-columns: 40px 1fr 1fr; gap: 4px; font-size: 11px; }
@@ -107,23 +110,31 @@
     </div>
 
     <script>
+        const sseConnections = new Map();
+
         async function loadTasks() {
             const response = await fetch('/api/tasks');
             const tasks = await response.json();
-            
+
             const container = document.getElementById('taskList');
             if (tasks.length === 0) {
                 container.innerHTML = '<div style="padding: 2rem; text-align: center; color: #7f8c8d;">暂无任务，去首页创建一个吧！</div>';
                 return;
             }
-            
+
             container.innerHTML = tasks.map(task => `
                 <div class="task-item">
                     <div>${task.id}</div>
                     <div style="font-size: 12px; overflow: hidden; text-overflow: ellipsis;" title="${escapeHtml(task.task_name)}">${escapeHtml(task.task_name)}</div>
                     <div style="font-size: 12px; overflow: hidden; text-overflow: ellipsis;" title="${escapeHtml(task.keywords.substring(0, 50))}">${escapeHtml(task.keywords.substring(0, 50))}</div>
                     <div>${renderJournalTags(task.selected_journals)}</div>
-                    <div><span class="status status-${task.status}">${getStatusText(task.status)}</span></div>
+                    <div>
+                        <span class="status status-${task.status}">${getStatusText(task.status)}</span>
+                        ${task.status === 'running' ? `
+                            <div class="mini-progress-wrap"><div class="mini-progress-fill" id="fill-${task.id}" style="width:${task.progress || 0}%"></div></div>
+                            <div class="mini-progress-text" id="ptext-${task.id}">${task.progress || 0}%</div>
+                        ` : ''}
+                    </div>
                     <div>${task.paper_count || 0}</div>
                     <div class="btn-group">
                         ${task.status === 'completed' ? `
@@ -134,13 +145,46 @@
                     </div>
                 </div>
             `).join('');
-            
-            // 自动刷新运行中的任务
-            const hasRunning = tasks.some(t => t.status === 'running');
-            if (hasRunning) {
-                setTimeout(loadTasks, 5000);
-            }
+
+            // 为 running 任务建立 SSE 连接
+            tasks.forEach(task => {
+                if (task.status !== 'running') {
+                    // 关闭并移除已完成/失败任务的连接
+                    if (sseConnections.has(task.id)) {
+                        sseConnections.get(task.id).close();
+                        sseConnections.delete(task.id);
+                    }
+                    return;
+                }
+                if (sseConnections.has(task.id)) return; // 已有连接
+
+                const es = new EventSource(`/api/task/${task.id}/stream`);
+                sseConnections.set(task.id, es);
+
+                es.onmessage = function(event) {
+                    const msg = JSON.parse(event.data);
+                    if (msg.type === 'progress') {
+                        const fill = document.getElementById(`fill-${task.id}`);
+                        const text = document.getElementById(`ptext-${task.id}`);
+                        if (fill) fill.style.width = msg.progress + '%';
+                        if (text) text.textContent = msg.message || (msg.progress + '%');
+                    } else if (msg.type === 'done' || msg.type === 'error') {
+                        es.close();
+                        sseConnections.delete(task.id);
+                        loadTasks();
+                    }
+                };
+                es.onerror = function() {
+                    es.close();
+                    sseConnections.delete(task.id);
+                };
+            });
         }
+
+        // 离开页面时关闭所有 SSE 连接
+        window.addEventListener('beforeunload', () => {
+            sseConnections.forEach(es => es.close());
+        });
         
         function renderJournalTags(journals) {
             if (!journals || journals.length === 0) {
@@ -213,16 +257,47 @@
             modal.style.display = 'flex';
         }
 
+        function copyToClipboard(text) {
+            // 优先使用 Clipboard API
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                return navigator.clipboard.writeText(text).catch(() => fallbackCopy(text));
+            }
+            return fallbackCopy(text);
+        }
+
+        function fallbackCopy(text) {
+            return new Promise((resolve, reject) => {
+                const textarea = document.createElement('textarea');
+                textarea.value = text;
+                textarea.style.position = 'fixed';
+                textarea.style.left = '-9999px';
+                textarea.style.top = '-9999px';
+                document.body.appendChild(textarea);
+                textarea.focus();
+                textarea.select();
+                try {
+                    document.execCommand('copy');
+                    resolve();
+                } catch (e) {
+                    reject(e);
+                }
+                document.body.removeChild(textarea);
+            });
+        }
+
         document.addEventListener('click', function(e) {
             const btn = e.target.closest('.copy-btn');
             if (!btn) return;
             const text = btn.getAttribute('data-copy');
             if (!text) return;
-            navigator.clipboard.writeText(text).then(() => {
-                const orig = btn.textContent;
+            const orig = btn.textContent;
+            copyToClipboard(text).then(() => {
                 btn.textContent = '已复制!';
                 setTimeout(() => { btn.textContent = orig; }, 1500);
-            }).catch(() => {});
+            }).catch(() => {
+                btn.textContent = '复制失败';
+                setTimeout(() => { btn.textContent = orig; }, 1500);
+            });
         });
         
         function getStatusText(status) {
@@ -247,7 +322,7 @@
         }
         
         loadTasks();
-        setInterval(loadTasks, 10000);
+        setInterval(loadTasks, 30000);
     </script>
 </body>
 </html>
